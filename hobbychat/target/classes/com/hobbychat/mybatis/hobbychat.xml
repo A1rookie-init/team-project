@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hobbychat.mybatis.MyBatisDAO">
+
+	<!-- id: sql 명령을 식별한다. -->
+	<!-- parameterType: sql 명령으로 전달되는 데이터의 타입을 적는다. -->
+	<!-- resultType: sql 명령 실행결과 리턴되는 데이터의 타입을 적는다. -->
+
+
+<!-- < Home 페이지 > -->	
+
+	<!-- 유저 아이디로 유저VO 조회 -->
+	<select id="selectUser" parameterType="String" resultType="com.hobbychat.vo.HcUser_VO">
+		select * from hcUser where userId = #{userId}
+	</select>
+	
+	<!-- 유저가 참여중인 대화방VO 목록 조회 -->
+	<select id="selectRoomListByUserId" parameterType="String" resultType="com.hobbychat.vo.HcChatRoom_VO">
+		select * from hcChatRoom where userList like '% '||#{userId}||'/%' order by roomId
+	</select>
+	
+	<!-- 대화방의 새 메세지 개수 조회 -->
+	<select id="selectCountNewMsg" parameterType="java.util.HashMap" resultType="int">
+		select count(*) from hcMsg where roomId = #{roomId} and unreadUser like '% '||#{userId}||'/%'
+	</select>
+
+<!-- < 대화방 페이지 > -->	
+
+	<!-- 대화방VO 조회 -->
+	<select id="selectRoom" parameterType="String" resultType="com.hobbychat.vo.HcChatRoom_VO">
+		select * from hcChatRoom where roomId = #{roomId}
+	</select>
+
+	<!-- 대화방 대화(메세지) 목록 조회 -->
+	<select id="selectMsgList" parameterType="String" resultType="com.hobbychat.vo.HcMsg_VO">
+		select * from HCMSG where roomId = #{roomId} order by writeDate
+	</select>
+	
+	<!-- 대화방에 들어올 시, 새메세지 -> 읽은 메세지로 변경 -->
+	<update id="updateMsgUnread" parameterType="java.util.HashMap">
+		update HCMSG set unread = unread - 1, unreadUser = #{unreadUser} where msgId = #{msgId} 
+	</update>
+
+	<!-- 유저 아이디로 유저의 프로필이미지 조회 -->
+	<select id="selectUserImg" parameterType="String" resultType="String">
+		select profileImg from hcUser where userId = #{userId}
+	</select>
+	
+	<!-- 메세지에 발신한 유저의 프로필이미지 담기 -->
+	<update id="updateMsgImg" parameterType="java.util.HashMap">
+		update HCMSG set profileImg = #{profileImg} where msgId = #{msgId} 
+	</update>
+	
+	<!-- 메세지 추가 -->
+	<insert id="insertMsg" parameterType="com.hobbychat.vo.HcMsg_VO">
+		insert into HCMSG (msgId, roomId, userId, nickName, msg, unread, unreadUser)
+		values ('M'||HCMSG_seq.nextval, #{roomId}, #{userId}, #{nickName}, #{msg}, #{unread}, #{unreadUser})
+	</insert>	
+	
+	<!-- 대화방 퇴장하기 (참여자에서 퇴장) -->
+	<update id="updateRoomUserExit" parameterType="com.hobbychat.vo.HcChatRoom_VO">
+		update hcChatRoom set userCnt = userCnt - 1, userList = #{userList} where roomId = #{roomId} 
+	</update>
+	
+	
+<!-- < 방검색 페이지 > -->
+	
+	<select id="selectCountChatRoomList_rName" parameterType="String" resultType="int">
+		select count(*) from hcChatRoom where roomName like '%'||#{item}||'%'
+	</select>
+	
+	<select id="selectCountChatRoomList_rTag" parameterType="String" resultType="int">
+		select count(*) from hcChatRoom where roomTag like '%'||#{item}||'%'
+	</select>
+	
+	
+	<select id="selectChatRoomListByRName" parameterType="com.hobbychat.vo.HcChatRoom_List" resultType="com.hobbychat.vo.HcChatRoom_VO">
+		<![CDATA[
+	select * from (select rownum rnum, TT.* from (select * from hcChatRoom where roomName like '%'||#{item}||'%' order by roomName) TT 
+	where rownum <= #{endNo}) where rnum >= #{startNo}
+	]]>
+	</select>
+	
+	<select id="selectChatRoomListByRTag" parameterType="com.hobbychat.vo.HcChatRoom_List" resultType="com.hobbychat.vo.HcChatRoom_VO">
+		<![CDATA[
+	select * from (select rownum rnum, TT.* from (select * from hcChatRoom where roomTag like '%'||#{item}||'%' order by roomName) TT 
+	where rownum <= #{endNo}) where rnum >= #{startNo}
+	]]>
+	</select>
+
+	<!-- 대화방 입장하기 클릭해서 방 최초 입장 시 -->
+	<update id="updateRoomUser" parameterType="java.util.HashMap">
+		update hcChatRoom set userCnt = userCnt + 1, userList = userList || ' ' || #{userId} || '/' where roomId = #{roomId} 
+	</update>
+	
+	
+<!-- < 마이페이지 > -->
+
+	<!-- 유저 수정(나의 정보 수정) -->
+	<update id="updateUser" parameterType="com.hobbychat.vo.HcUser_VO">
+		update hcUser set PASSWORD = #{password}, NICKNAME = #{nickName}, MYTAG = #{myTag}, MYCOMMENT = #{myComment}, 
+		PROFILEIMG = #{profileImg} where USERID = #{userId}
+	</update>
+
+
+<!-- < 방 생성 페이지 > -->	
+	<!-- 방이름으로 방VO 조회 -->
+	<select id="selectCountRoomByRName" parameterType="String" resultType="int">
+		select count(*) from hcChatRoom where roomName = #{roomName}
+	</select>
+	
+	<!-- 방 생성 -->
+	<insert id="insertRoom" parameterType="com.hobbychat.vo.HcChatRoom_VO">
+		insert into HCCHATROOM (roomId, roomName, roomTag, rComment, userCnt, userList, coverImg)
+		values ('R'||HCCHATROOM_seq.nextval, #{roomName}, #{roomTag}, #{rComment}, 1, #{userList}, #{coverImg})
+	</insert>
+
+	
+<!-- < 회원 가입 페이지 > -->
+	<!-- 아이디 중복 검사를 위한 아이디 조회 -->
+	<select id="selectCountId" parameterType="String" resultType="int">
+		select count(*) from hcUser where userId = #{userId}
+	</select>
+	
+	<!-- 닉네임 중복 검사를 위한 닉네임 조회 -->
+	<select id="selectCountNickName" parameterType="String" resultType="int">
+		select count(*) from hcUser where nickName = #{nickName}
+	</select>
+	
+	<!-- 회원 가입 완료 -->
+	<insert id="insertUser" parameterType="com.hobbychat.vo.HcUser_VO">
+		insert into HcUser (userId, password, nickName, myTag, profileImg, myComment) values (#{userId}, #{password}, #{nickName}, 
+		#{myTag}, #{profileImg}, #{myComment})
+	</insert>
+
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
