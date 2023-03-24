@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mybatis.MyBatisDAO">
+
+
+
+	<!-- 브사별 사원 꺼내오기 -->
+	<select id="selectEmployeeDpart" parameterType="String" resultType="com.hospital.vo.Employee_20VO">
+		select * from employee_20 where dpart=#{dpart} order by employeeIdx
+	</select>
+
+	<select id="selectSignForPaging" parameterType="com.hospital.vo.Employee_20List" resultType="com.hospital.vo.Employee_20VO">
+			<![CDATA[
+		select * from (select rownum rnum, TT.* from (select * from employee_20 where  sign !='del' order by employeeIdx) TT 
+		where rownum <= #{endNo}) where rnum >= #{startNo}
+		]]>
+	</select>
+	
+	
+	<select id="selectSignDpartForPaging" parameterType="com.hospital.vo.Employee_20List" resultType="com.hospital.vo.Employee_20VO">
+			<![CDATA[
+		select * from (select rownum rnum, TT.* from (select * from employee_20 where dpart like '%'||#{set}||'%' order by employeeIdx) TT 
+		where rownum <= #{endNo}) where rnum >= #{startNo}
+		]]>
+	</select>
+	
+	<!-- 승인 전 사원목록 -->
+
+	<select id="selectSign"	resultType="com.hospital.vo.Employee_20VO">
+		select * from employee_20 where sign is null
+	</select>
+	
+	<select id="selectCountSign" resultType="int">
+		select count(*) from employee_20 where sign != 'del'
+	</select>
+	
+	
+	<!-- 사원 승인 -->
+	<update id="updateSign"   parameterType="int">
+      update employee_20 set sign = 'Y' where employeeidx = #{employeeIdx}
+   </update>
+
+
+	<!-- 부서별 사원 -->
+	<select id="selectCountEmployeeDpart" parameterType="String" resultType="int">
+		select count(*) from employee_20 where dpart like '%'||#{set}||'%' order by name
+	</select>
+
+
+	<!-- 팀이동 -->
+	<update id="moveTeamD" parameterType="com.hospital.vo.Employee_20VO">
+		update employee_20 set doctort = #{doctorT} where employeeIdx = #{employeeIdx}
+	</update>
+	<update id="moveTeamN" parameterType="com.hospital.vo.Employee_20VO">
+		update employee_20 set nurset = #{nurseT} where employeeIdx = #{employeeIdx}
+	</update>
+
+	<!-- 직급변경 -->	
+	<update id="updateAdmin" parameterType="com.hospital.vo.Employee_20VO">
+		update employee_20 set admin = #{admin} where employeeIdx = #{employeeIdx}
+	</update>
+	
+	<update id="updateAdminDoc" parameterType="com.hospital.vo.Employee_20VO">
+		update employee_20 set admin = #{admin}, doctorT = 'D' where employeeIdx = #{employeeIdx}
+	</update>
+	<update id="updateAdminNur" parameterType="com.hospital.vo.Employee_20VO">
+		update employee_20 set admin = #{admin}, nurseT = 'D' where employeeIdx = #{employeeIdx}
+	</update>
+	
+	
+	
+	
+	
+
+
+	<!-- 퇴사 -->
+	<update id="deleteEmployee" parameterType="int">
+		update employee_20 set firedate = sysdate, dpart = 'del', doctort=null, nurset=null, sign ='del'  where employeeIdx = #{employeeIdx}
+	</update>
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mybatis.MyBatisDAO">
+
+<!-- 직원 회원가입 데이터 저장 -->
+	<insert id="employeeinsert" parameterType="com.hospital.vo.Employee_20VO">
+		insert into EMPLOYEE_20 (employeeIdx, password, name, gender, age, dpart, doctorT, nurseT, dnumber, enumber, HIREDATE)
+		values (#{employeeIdx}, #{password}, #{name}, #{gender}, #{age}, #{dpart}, #{doctorT, jdbcType=VARCHAR}, #{nurseT, jdbcType=VARCHAR}, #{dnumber}, #{enumber}, sysdate)
+	</insert>
+
+<!-- 	사내검색 -->
+	<select id="selectEmployeeListByName" parameterType="String" resultType="com.hospital.vo.Employee_20VO">
+		select * from employee_20 where Name like '%'||#{item}||'%' order by name
+	</select>
+
+	<select id="selectdpartListByName" parameterType="String" resultType="com.hospital.vo.Dpart_23VO">
+		select * from dpart_23 where dpartName like '%'||#{item}||'%' order by dpartIdx
+	</select>
+
+	<select id="selectCountEmpListByName" parameterType="String" resultType="int">
+		select count(*) from employee_20 where Name like '%'||#{item}||'%' order by name
+	</select>
+	
+	<select id="selectCountDpartListByName" parameterType="String" resultType="int">
+		select count(*) from dpart_23 where dpartName like '%'||#{item}||'%' order by dpartIdx
+	</select>
+
+
+	<select id="selectEmpListByNameForPaging" parameterType="com.hospital.vo.Employee_20List" resultType="com.hospital.vo.Employee_20VO">
+			<![CDATA[
+		select * from (select rownum rnum, TT.* from (select * from employee_20 where name like '%'||#{item}||'%' order by employeeIdx) TT 
+		where rownum <= #{endNo}) where rnum >= #{startNo}
+		]]>
+	</select>
+	
+	<select id="selectDpartListByNameForPaging" parameterType="com.hospital.vo.Dpart_23List" resultType="com.hospital.vo.Dpart_23VO">
+			<![CDATA[
+		select * from (select rownum rnum, TT.* from (select * from dpart_23 where dpartName like '%'||#{item}||'%' order by dpartIdx) TT 
+		where rownum <= #{endNo}) where rnum >= #{startNo}
+		]]>
+	</select>
+	
+	
+<!-- < 마이페이지 >	 -->
+
+<!-- 	마이페이지 : 프로필사진 업로드 -->
+	<update id="updateEmployeeImg" parameterType="com.hospital.vo.Employee_20VO">
+		update employee_20 set orgFileName = #{orgFileName} where employeeIdx = #{employeeIdx}
+	</update>
+	
+	
+<!-- 	마이페이지 : 프로필사진 보여주기 -->
+	<select id="selectEmployeeImg" parameterType="int" resultType="String">
+		select savedFileName from employee_20 where employeeIdx = #{employeeIdx}
+	</select>
+
+<!-- 	나의 정보 (사원 꺼내오기) -->
+	<select id="selectEmployee" parameterType="int" resultType="com.hospital.vo.Employee_20VO">
+		select * from employee_20 where employeeIdx = #{employeeIdx}
+	</select>
+	
+<!-- 	나의 정보 수정 -->
+	<update id="updateEmployee" parameterType="com.hospital.vo.Employee_20VO">
+		update EMPLOYEE_20 set password = #{password}, name = #{name}, gender = #{gender}, age = #{age}, dpart = #{dpart}, 
+		doctorT = #{doctorT, jdbcType=VARCHAR}, nurseT = #{nurseT, jdbcType=VARCHAR}, dnumber = #{dnumber}, enumber = #{enumber}, orgFileName = #{orgFileName, jdbcType=VARCHAR},
+		 savedFileName = #{savedFileName, jdbcType=VARCHAR}
+		where employeeIdx = #{employeeIdx}
+	</update>
+
+
+
+<!-- < 관리자페이지 > -->
+
+<!-- 팀별 스케줄 -->
+	<!-- 	의사 팀별 사원 꺼내오기 -->
+	<select id="selectEmpListByDTeam" parameterType="String" resultType="com.hospital.vo.Employee_20VO">
+		select * from employee_20 where doctorT = #{team}
+	</select>
+	
+	<!-- 	간호사 팀별 사원 꺼내오기 -->
+	<select id="selectEmpListByNTeam" parameterType="String" resultType="com.hospital.vo.Employee_20VO">
+		select * from employee_20 where nurseT = #{team}
+	</select>
+	
+	<!-- 	부서별 사원 꺼내오기 -->
+	<select id="selectEmpListBydpart" parameterType="String" resultType="com.hospital.vo.Employee_20VO">
+		select * from employee_20 where dpart = #{dpart}
+	</select>
+	
+<!-- 	과장 팀장 제외한 팀원만 꺼내오기 -->
+<!-- 		의사 팀별 사원 꺼내오기 -->
+	<select id="selectEmpListByDTeamNotAdmin" parameterType="String" resultType="com.hospital.vo.Employee_20VO">
+		select * from employee_20 where doctorT = #{team} and NOT (admin = '과장' or admin= '팀장') order by employeeIdx
+	</select>
+<!-- 		간호사 팀별 사원 꺼내오기 -->
+	<select id="selectEmpListByNTeamNotAdmin" parameterType="String" resultType="com.hospital.vo.Employee_20VO">
+		select * from employee_20 where nurseT = #{team} and NOT (admin = '과장' or admin= '팀장') order by employeeIdx
+	</select>
+
+	
+	
+	<!-- 	간호사 월스케줄 데이근무 꺼내오기 -->
+	<select id="selectScheduleNDay" parameterType="String" resultType="com.hospital.vo.ScheduleN_d_24VO">
+		select * from ScheduleN_d_24 where idx = #{idx}
+	</select>
+	<!-- 	간호사 월스케줄 이브닝근무 꺼내오기 -->
+	<select id="selectScheduleNEven" parameterType="String" resultType="com.hospital.vo.ScheduleN_e_25VO">
+		select * from ScheduleN_e_25 where idx = #{idx}
+	</select>
+	<!-- 	간호사 월스케줄 나이트근무 꺼내오기 -->
+	<select id="selectScheduleNNig" parameterType="String" resultType="com.hospital.vo.ScheduleN_n_26VO">
+		select * from ScheduleN_n_26 where idx = #{idx}
+	</select>
+	
+	
+	<!-- 	간호사 월스케줄 등록하기 -->
+	<insert id="insertTeamCalendarNDay" parameterType="com.hospital.vo.ScheduleN_d_24VO">
+		insert into schedulen_d_24 VALUES 
+		(#{idx}, #{team}, #{year}, #{month}, 
+		#{shiftD_1}, #{shiftD_2}, #{shiftD_3}, #{shiftD_4}, #{shiftD_5}, #{shiftD_6}, #{shiftD_7}, #{shiftD_8}, #{shiftD_9}, #{shiftD_10}, 
+		#{shiftD_11}, #{shiftD_12}, #{shiftD_13}, #{shiftD_14}, #{shiftD_15}, #{shiftD_16}, #{shiftD_17}, #{shiftD_18}, #{shiftD_19}, #{shiftD_20}, 
+		#{shiftD_21}, #{shiftD_22}, #{shiftD_23}, #{shiftD_24}, #{shiftD_25}, #{shiftD_26}, #{shiftD_27}, #{shiftD_28}, #{shiftD_29}, #{shiftD_30},
+		#{shiftD_31}, #{lastN},
+		#{managerIdx}, sysdate)
+	</insert>
+
+	<insert id="insertTeamCalendarNEven" parameterType="com.hospital.vo.ScheduleN_e_25VO">
+		insert into schedulen_e_25 VALUES 
+		(#{idx}, #{team}, #{year}, #{month}, 
+		#{shiftE_1}, #{shiftE_2}, #{shiftE_3}, #{shiftE_4}, #{shiftE_5}, #{shiftE_6}, #{shiftE_7}, #{shiftE_8}, #{shiftE_9}, #{shiftE_10}, 
+		#{shiftE_11}, #{shiftE_12}, #{shiftE_13}, #{shiftE_14}, #{shiftE_15}, #{shiftE_16}, #{shiftE_17}, #{shiftE_18}, #{shiftE_19}, #{shiftE_20}, 
+		#{shiftE_21}, #{shiftE_22}, #{shiftE_23}, #{shiftE_24}, #{shiftE_25}, #{shiftE_26}, #{shiftE_27}, #{shiftE_28}, #{shiftE_29}, #{shiftE_30},
+		#{shiftE_31}, #{lastN},
+		#{managerIdx}, sysdate)
+	</insert>
+
+	<insert id="insertTeamCalendarNNig" parameterType="com.hospital.vo.ScheduleN_n_26VO">
+		insert into schedulen_n_26 VALUES 
+		(#{idx}, #{team}, #{year}, #{month}, 
+		#{shiftN_1}, #{shiftN_2}, #{shiftN_3}, #{shiftN_4}, #{shiftN_5}, #{shiftN_6}, #{shiftN_7}, #{shiftN_8}, #{shiftN_9}, #{shiftN_10}, 
+		#{shiftN_11}, #{shiftN_12}, #{shiftN_13}, #{shiftN_14}, #{shiftN_15}, #{shiftN_16}, #{shiftN_17}, #{shiftN_18}, #{shiftN_19}, #{shiftN_20}, 
+		#{shiftN_21}, #{shiftN_22}, #{shiftN_23}, #{shiftN_24}, #{shiftN_25}, #{shiftN_26}, #{shiftN_27}, #{shiftN_28}, #{shiftN_29}, #{shiftN_30},
+		#{shiftN_31}, #{lastN},
+		#{managerIdx}, sysdate)
+	</insert>
+	
+	
+	<!-- 	간호사 월스케줄 수정하기 -->
+	<update id="updateTeamCalendarNDay" parameterType="com.hospital.vo.ScheduleN_d_24VO">
+		update schedulen_d_24 set 
+		shiftD_1 = #{shiftD_1}, shiftD_2 = #{shiftD_2}, shiftD_3 = #{shiftD_3}, shiftD_4 = #{shiftD_4}, shiftD_5 = #{shiftD_5}, 
+		shiftD_6 = #{shiftD_6}, shiftD_7 = #{shiftD_7}, shiftD_8 = #{shiftD_8}, shiftD_9 = #{shiftD_9}, shiftD_10 = #{shiftD_10}, 
+		shiftD_11 = #{shiftD_11}, shiftD_12 = #{shiftD_12}, shiftD_13 = #{shiftD_13}, shiftD_14 = #{shiftD_14}, shiftD_15 = #{shiftD_15}, 
+		shiftD_16 = #{shiftD_16}, shiftD_17 = #{shiftD_17}, shiftD_18 = #{shiftD_18}, shiftD_19 = #{shiftD_19}, shiftD_20 = #{shiftD_20}, 
+		shiftD_21 = #{shiftD_21}, shiftD_22 = #{shiftD_22}, shiftD_23 = #{shiftD_23}, shiftD_24 = #{shiftD_24}, shiftD_25 = #{shiftD_25}, 
+		shiftD_26 = #{shiftD_26}, shiftD_27 = #{shiftD_27}, shiftD_28 = #{shiftD_28}, shiftD_29 = #{shiftD_29}, shiftD_30 = #{shiftD_30},
+		shiftD_31 = #{shiftD_31}, 
+		managerIdx = #{managerIdx}, writeDate = sysdate where idx = #{idx}
+	</update>
+
+	<update id="updateTeamCalendarNEven" parameterType="com.hospital.vo.ScheduleN_e_25VO">
+		update schedulen_e_25 set 
+		shiftE_1 = #{shiftE_1}, shiftE_2 = #{shiftE_2}, shiftE_3 = #{shiftE_3}, shiftE_4 = #{shiftE_4}, shiftE_5 = #{shiftE_5}, 
+		shiftE_6 = #{shiftE_6}, shiftE_7 = #{shiftE_7}, shiftE_8 = #{shiftE_8}, shiftE_9 = #{shiftE_9}, shiftE_10 = #{shiftE_10}, 
+		shiftE_11 = #{shiftE_11}, shiftE_12 = #{shiftE_12}, shiftE_13 = #{shiftE_13}, shiftE_14 = #{shiftE_14}, shiftE_15 = #{shiftE_15}, 
+		shiftE_16 = #{shiftE_16}, shiftE_17 = #{shiftE_17}, shiftE_18 = #{shiftE_18}, shiftE_19 = #{shiftE_19}, shiftE_20 = #{shiftE_20}, 
+		shiftE_21 = #{shiftE_21}, shiftE_22 = #{shiftE_22}, shiftE_23 = #{shiftE_23}, shiftE_24 = #{shiftE_24}, shiftE_25 = #{shiftE_25}, 
+		shiftE_26 = #{shiftE_26}, shiftE_27 = #{shiftE_27}, shiftE_28 = #{shiftE_28}, shiftE_29 = #{shiftE_29}, shiftE_30 = #{shiftE_30},
+		shiftE_31 = #{shiftE_31}, 
+		managerIdx = #{managerIdx}, writeDate = sysdate where idx = #{idx}
+	</update>
+
+	<update id="updateTeamCalendarNNig" parameterType="com.hospital.vo.ScheduleN_n_26VO">
+		update schedulen_n_26 set 
+		shiftN_1 = #{shiftN_1}, shiftN_2 = #{shiftN_2}, shiftN_3 = #{shiftN_3}, shiftN_4 = #{shiftN_4}, shiftN_5 = #{shiftN_5}, 
+		shiftN_6 = #{shiftN_6}, shiftN_7 = #{shiftN_7}, shiftN_8 = #{shiftN_8}, shiftN_9 = #{shiftN_9}, shiftN_10 = #{shiftN_10}, 
+		shiftN_11 = #{shiftN_11}, shiftN_12 = #{shiftN_12}, shiftN_13 = #{shiftN_13}, shiftN_14 = #{shiftN_14}, shiftN_15 = #{shiftN_15}, 
+		shiftN_16 = #{shiftN_16}, shiftN_17 = #{shiftN_17}, shiftN_18 = #{shiftN_18}, shiftN_19 = #{shiftN_19}, shiftN_20 = #{shiftN_20}, 
+		shiftN_21 = #{shiftN_21}, shiftN_22 = #{shiftN_22}, shiftN_23 = #{shiftN_23}, shiftN_24 = #{shiftN_24}, shiftN_25 = #{shiftN_25}, 
+		shiftN_26 = #{shiftN_26}, shiftN_27 = #{shiftN_27}, shiftN_28 = #{shiftN_28}, shiftN_29 = #{shiftN_29}, shiftN_30 = #{shiftN_30},
+		shiftN_31 = #{shiftN_31}, 
+		managerIdx = #{managerIdx}, writeDate = sysdate where idx = #{idx}
+	</update>
+
+
+
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

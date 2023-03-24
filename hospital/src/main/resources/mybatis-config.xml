@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<!-- 별명 사용하지 않을 예정 
+
+	<typeAliases>
+		<typeAlias alias="vo" type="com.hospital.vo.VO"/>
+	</typeAliases> -->
+	
+	
+</configuration>
+
+

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mybatis.MyBatisDAO">
+
+
+
+<!-- 메인페이지 (병리사) -->
+	
+	
+	<!-- 알림 -->
+	<select id="selectNoticeToPList" parameterType="String" resultType="com.hospital.vo.NoticeToP_14VO">
+		select * from NoticeToP_14 where (TO_CHAR(sysdate, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd'))
+	</select>
+
+	<!-- 메모 -->
+	<select id="selectmemoPList" resultType="com.hospital.vo.WorkMemoP_15VO">
+		select * from WORKMEMOP_15 order by idx
+	</select>
+	
+	<!-- 업무메모 저장 -->
+	<insert id="workmemoPinsert" parameterType="com.hospital.vo.WorkMemoP_15VO">
+		insert into WORKMEMOP_15 (IDX, EMPLOYEEIDX, commentP)
+		values (WORKMEMOP_15_idx_seq.nextval, #{employeeIdx}, #{commentP})
+	</insert>
+	
+	<select id="commentPselectByIdx" parameterType="int" resultType="com.hospital.vo.WorkMemoP_15VO">
+		select * from WORKMEMOP_15 where idx = #{idx}
+	</select>
+	
+	<!-- 업무 메모 삭제 -->
+	<delete id="deletePmemo" parameterType="int">
+		delete from WORKMEMOP_15 where idx = #{idx}
+	</delete>
+	
+	<!-- 업무 메모 수정 -->
+	<update id="updatePmemo" parameterType="com.hospital.vo.WorkMemoP_15VO">
+		update WORKMEMOP_15 set commentP = #{commentP} where idx = #{idx}
+	</update>
+	
+	<!-- 혈액 검사 결과를 저장 -->
+	<insert id="insertTestBlood" parameterType="com.hospital.vo.TestBlood_17VO">
+		insert into TESTBLOOD_17 (IDX, patientIdx, gender, WBC, Hb, Hct, RBC, MCV, MCH, MCHC, Platelet, employeeIdx, employeeName)
+		values(TESTBLOOD_17_idx_seq.nextval, #{patientIdx}, #{gender}, #{WBC}, #{Hb}, #{Hct}, #{RBC}, #{MCV}, #{MCH}, #{MCHC}, #{Platelet}, #{employeeIdx}, #{employeeName})
+	</insert>
+	
+	<!-- 혈액 검사 결과를 저장 -->
+	<insert id="insertTestUrine" parameterType="com.hospital.vo.TestUrine_21VO">
+		insert into TestUrine_21 (IDX, patientIdx, gender, color, turbidity, gravity, acidity, albumin, glucose, ketones, bilirubin, blood, bilinogen, nitrite, leukocyte, employeeIdx, employeeName)
+		values(TestUrine_21_idx_seq.nextval, #{patientIdx}, #{gender}, #{color}, #{turbidity}, #{gravity}, #{acidity}, #{albumin}, #{glucose}, #{ketones}, #{bilirubin}, #{blood}, #{bilinogen}, #{nitrite}, #{leukocyte}, #{employeeIdx}, #{employeeName})
+	</insert>
+
+	<!-- 검사 결과 의사 알람 -->
+	<insert id="insertNoticeToD" parameterType="com.hospital.vo.NoticeToD_2VO">
+		insert into NoticeToD_2 (idx, patientIdx, name, alarmD, fromDP, employeeIdx, fromName)
+		values(NoticeToD_2_idx_seq.nextval, #{patientIdx}, #{name}, #{alarmD}, #{fromDP}, #{employeeIdx}, #{fromName})
+	</insert>
+	
+	<!-- 검사 결과 간호사 알람 -->
+	<insert id="insertNoticeToN" parameterType="com.hospital.vo.NoticeToN_8VO">
+		insert into NoticeToN_8 (idx, patientIdx, name, alarmN, fromDP, employeeIdx, fromName)
+		values(NoticeToN_8_idx_seq.nextval, #{patientIdx}, #{name}, #{alarmN}, #{fromDP}, #{employeeIdx}, #{fromName})
+	</insert>
+	
+	<!-- 해당 환자의 최근 혈액검사 idx 조회 -->
+	<select id="selectBloodTestIdx" parameterType="int" resultType="com.hospital.vo.TestBlood_17VO">
+		select * from (SELECT * FROM TESTBLOOD_17 where patientIdx = #{patientIdx} ORDER BY IDX DESC) WHERE ROWNUM= 1
+	</select>
+	
+	<!-- 해당 환자의 최근 소변검사 idx 조회 -->
+	<select id="selectUrineTestIdx" parameterType="int" resultType="com.hospital.vo.TestUrine_21VO">
+		select * from (SELECT * FROM TESTURINE_21 where patientIdx = #{patientIdx} ORDER BY IDX DESC) WHERE ROWNUM= 1
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

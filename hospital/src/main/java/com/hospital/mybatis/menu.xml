@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mybatis.MyBatisDAO">
+
+
+
+	<select id="selectNursingCommentList_Menu" parameterType="java.util.HashMap" resultType="com.hospital.vo.NursingComment_13VO">
+		select * from nursingComment_13 where (TO_CHAR(sysdate - #{subDay}, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd')) and patientIdx = #{patientIdx} order by idx
+	</select>
+
+	
+	<select id="selectInjectionList_Menu" parameterType="java.util.HashMap" resultType="com.hospital.vo.Injection_11VO">
+		select * from injection_11 where (TO_CHAR(sysdate - #{subDay}, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd')) and patientIdx = #{patientIdx} order by idx
+	</select>
+	
+	
+	
+	<select id="selectVitalSignList_Menu" parameterType="java.util.HashMap" resultType="com.hospital.vo.VitalSign_10VO">
+		select * from vitalsign_10 where (TO_CHAR(sysdate - #{subDay}, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd')) and patientIdx = #{patientIdx} order by idx
+	</select>
+	
+	
+	<select id="selectPrescriptionMedList_Menu" parameterType="java.util.HashMap" resultType="com.hospital.vo.PrescriptionMed_4VO">
+		select * from PrescriptionMed_4 where (TO_CHAR(sysdate - #{subDay}, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd')) and patientIdx = #{patientIdx} order by idx
+	</select>
+
+	<select id="selectPrescriptionTestList_Menu" parameterType="java.util.HashMap" resultType="com.hospital.vo.PrescriptionTest_5VO">
+		select * from PrescriptionTest_5 where (TO_CHAR(sysdate - #{subDay}, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd')) and patientIdx = #{patientIdx} order by idx
+	</select>
+
+	<select id="selectMediCommentList_Menu" parameterType="java.util.HashMap" resultType="com.hospital.vo.MedicalComment_7VO">
+		select * from MedicalComment_7 where (TO_CHAR(sysdate - #{subDay}, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd')) and patientIdx = #{patientIdx} order by idx
+	</select>
+	
+
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

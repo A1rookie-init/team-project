@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mybatis.MyBatisDAO">
+
+	<!-- id: sql 명령을 식별한다. -->
+	<!-- parameterType: sql 명령으로 전달되는 데이터의 타입을 적는다. -->
+	<!-- resultType: sql 명령 실행결과 리턴되는 데이터의 타입을 적는다. -->
+	
+	
+	<!-- 업무알림 목록 얻어오기 -->
+	<select id="selectNoticeToAList" parameterType="String" resultType="com.hospital.vo.NoticeToA_18VO">
+		select * from NoticeToA_18 where (TO_CHAR(sysdate, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd'))
+	</select>
+	
+	
+	
+	<!-- 업무 메모 목록 얻어오기 -->
+	<select id="selectmemoList" resultType="com.hospital.vo.WorkMemoA_19VO">
+		select * from WORKMEMOA_19 order by idx
+	</select>
+	
+	<!-- 업무메모 저장 -->
+	<insert id="workmemoinsert" parameterType="com.hospital.vo.WorkMemoA_19VO">
+		insert into WORKMEMOA_19 (IDX, EMPLOYEEIDX, COMMENTA)
+		values (WORKMEMOA_19_idx_seq.nextval, #{employeeIdx}, #{commentA})
+	</insert>
+	
+	<select id="commentAselectByIdx" parameterType="int" resultType="com.hospital.vo.WorkMemoA_19VO">
+		select * from WORKMEMOA_19 where idx = #{idx}
+	</select>
+	
+	<!-- 업무 메모 삭제 -->
+	<delete id="deletememo" parameterType="int">
+		delete from WORKMEMOA_19 where idx = #{idx}
+	</delete>
+	
+	<!-- 업무 메모 수정 -->
+	<update id="updatememo" parameterType="com.hospital.vo.WorkMemoA_19VO">
+		update WORKMEMOA_19 set commentA = #{commentA} where idx = #{idx}
+	</update>
+	
+	<!-- 신환 등록 알람 -->
+	<insert id="insertNoticeToDFromA" parameterType="com.hospital.vo.NoticeToD_2VO">
+		insert into NoticeToD_2 (idx, patientIdx, name, alarmD, fromDP, employeeIdx, fromName)
+		values(NoticeToD_2_idx_seq.nextval, #{patientIdx}, #{name}, #{alarmD}, #{fromDP}, #{employeeIdx}, #{fromName})
+	</insert>
+	<!-- 퇴원수납 혈액/소변검사-->
+	<select id="selectPrescriptionTest" parameterType="int" resultType="com.hospital.vo.PrescriptionTest_5VO">
+		select * from PrescriptionTest_5 where patientIdx = #{patientIdx}
+	</select>
+	
+	<!-- 퇴원수납 혈액검사 개수-->
+	<select id="selectPreTestBCount" resultType="int">
+		select count(test) from PrescriptionTest_5 where patientIdx = #{patientIdx} and test = '혈액검사'
+	</select>
+	<!-- 퇴원수납 소변검사 개수-->
+	<select id="selectPreTestPCount" resultType="int">
+		select count(test) from PrescriptionTest_5 where patientIdx = #{patientIdx} and test = '소변검사'
+	</select>
+	
+	<!-- 약품비 -->
+	<select id="selectPrescriptionMed" resultType="int">
+		select count(medicine) from PrescriptionMed_4 where patientIdx = #{patientIdx}
+	</select>
+
+	
+	<!-- 진찰료 -->
+	<select id="selectMedicalComment" resultType="int">
+		select count(recordD) from MedicalComment_7 where patientIdx = #{patientIdx}
+	</select>
+
+
+	<select id="dischargeselectByIdx" parameterType="int" resultType="com.hospital.vo.Patient_1VO">
+		select * from Patient_1 where patientIdx = #{patientIdx}
+	</select>
+
+	<!-- 환자 테이블 퇴원 컬럼 수정 -->
+	<update id="changedischarge" parameterType="com.hospital.vo.Patient_1VO">
+		update Patient_1 set discharge = 'Y' where patientIdx = #{patientIdx}
+	</update>
+	
+	<update id="updatePatientDischarge" parameterType="int">
+		update Patient_1 set discharge = 'Y', disdate = sysdate where patientIdx = #{patientIdx}
+	</update>
+	
+	<!-- 팀에서 담당하고 있는 환자수 -->
+	<select id="countDT" parameterType="string" resultType="int">
+		select count(*) from patient_1 where doctorT = #{doctorT} and discharge = 'N'
+	</select> 
+	<select id="countNT" parameterType="string" resultType="int">
+		select count(*) from patient_1 where nurseT = #{nurseT} and discharge = 'N'
+	</select>
+		
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

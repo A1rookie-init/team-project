@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mybatis.MyBatisDAO">
+
+<!-- < 메인페이지 >  -->
+
+<!-- 재원환자 조회 -->	
+	<select id="selectPatientList_All" resultType="com.hospital.vo.Patient_1VO">
+		select * from patient_1 where discharge = 'N' order by name
+	</select>
+	
+	<select id="selectPatient" parameterType="int" resultType="com.hospital.vo.Patient_1VO">
+		select * from patient_1 where patientIdx = #{patientIdx}
+	</select>
+	
+	<select id="selectPatientList_Doctor" parameterType="String" resultType="com.hospital.vo.Patient_1VO">
+		select * from patient_1 where discharge = 'N' and doctorT = #{dpart} order by name
+	</select>
+	
+	<select id="selectPatientList_Nurse" parameterType="String" resultType="com.hospital.vo.Patient_1VO">
+		select * from patient_1 where discharge = 'N' and nurseT = #{dpart} order by name
+	</select>
+
+<!-- 메뉴바: 퇴원환자 조회   -->
+
+	<select id="selectPatientList_DisAll" resultType="com.hospital.vo.Patient_1VO">
+		select * from patient_1 where discharge = 'Y' order by disDate desc
+	</select>
+
+
+	<select id="selectPatientList_pIdx" parameterType="int" resultType="com.hospital.vo.Patient_1VO">
+		select * from patient_1 where discharge = 'Y' and patientIdx like '%'||#{patientIdx}||'%' order by patientIdx
+	</select>
+	
+	<select id="selectCountPatientList_pIdx" parameterType="int" resultType="int">
+		select count(*) from patient_1 where discharge = 'Y' and patientIdx like '%'||#{patientIdx}||'%' order by patientIdx
+	</select>
+	
+	<select id="selectPatientList_pIdxForPaging" parameterType="com.hospital.vo.Patient_1List_Item" resultType="com.hospital.vo.Patient_1VO">
+		<![CDATA[
+	select * from (select rownum rnum, TT.* from (select * from patient_1 where discharge = 'Y' and patientIdx like '%'||#{item}||'%' order by patientIdx) TT 
+	where rownum <= #{endNo}) where rnum >= #{startNo}
+	]]>
+	</select>
+	
+	
+	<select id="selectPatientList_pName" parameterType="String" resultType="com.hospital.vo.Patient_1VO">
+		select * from patient_1 where discharge = 'Y' and Name like '%'||#{pName}||'%' order by name
+	</select>
+	
+	<select id="selectCountPatientList_pName" parameterType="String" resultType="int">
+		select count(*) from patient_1 where discharge = 'Y' and Name like '%'||#{pName}||'%' order by name
+	</select>
+
+	<select id="selectPatientList_pNameForPaging" parameterType="com.hospital.vo.Patient_1List_Item" resultType="com.hospital.vo.Patient_1VO">
+		<![CDATA[
+	select * from (select rownum rnum, TT.* from (select * from patient_1 where discharge = 'Y' and Name like '%'||#{item}||'%' order by name) TT 
+	where rownum <= #{endNo}) where rnum >= #{startNo}
+	]]>
+	</select>
+
+	<select id="selectPatientList_pDisDate" parameterType="java.util.Date" resultType="com.hospital.vo.Patient_1VO">
+		select * from patient_1 where discharge = 'Y' and TO_CHAR(DisDate, 'yyyy/mm/dd') = TO_CHAR(#{pDisDate}, 'yyyy/mm/dd') order by disDate desc
+	</select>
+	<select id="selectCountPatientList_pDisDate" parameterType="java.util.Date" resultType="int">
+		select count(*) from patient_1 where discharge = 'Y' and TO_CHAR(DisDate, 'yyyy/mm/dd') = TO_CHAR(#{pDisDate}, 'yyyy/mm/dd') order by disDate desc
+	</select>
+	<select id="selectPatientList_pDisDateForPaging" parameterType="com.hospital.vo.Patient_1List_Item" resultType="com.hospital.vo.Patient_1VO">
+		<![CDATA[
+	select * from (select rownum rnum, TT.* from 
+	(select * from patient_1 where discharge = 'Y' and TO_CHAR(DisDate, 'yyyy/mm/dd') = TO_CHAR(#{date}, 'yyyy/mm/dd') order by disDate desc) TT 
+	where rownum <= #{endNo}) where rnum >= #{startNo}
+	]]>
+	</select>
+
+
+<!-- < 환자상세페이지- 메뉴바: 환자정보조회 > -->
+
+	<!-- 환자 정보 수정하는 update -->
+	<update id="updatePatientDetail" parameterType="com.hospital.vo.Patient_1VO">
+		update patient_1 set name = #{name}, registNum1 = #{registNum1}, registNum2 = #{registNum2}, age = #{age}, 
+		gender = #{gender}, address = #{address}, insurance = #{insurance}, room = #{room}, meal = #{meal}, doctorT = #{doctorT}, 
+		nurseT = #{nurseT}, discharge=#{discharge}, cc = #{cc}, pi = #{pi}, histroy = #{histroy}, allergy = #{allergy}, alcohol = #{alcohol}, 
+		smoking = #{smoking}, diagnosis = #{diagnosis}, carePlan = #{carePlan}, exDisDate = #{exDisDate} where patientIdx = #{patientIdx} 
+	</update>
+	
+	<!-- 원무과에서 의사에 초진 알람 보낼때 젤 끝 환자번호 +1 하려고 마지막 번호 뽑기  -->
+	<select id="selectnewPatientIdx" resultType="int">
+		select max(patientIdx) from patient_1
+	</select>
+
+<!--  검사조회 -->
+
+	<select id="selectUrineTest" parameterType="int" resultType="com.hospital.vo.TestUrine_21VO">
+		select * from TestUrine_21 where patientidx = #{patientidx}  
+	</select>
+	
+	<select id="selectBloodTest" parameterType="int" resultType="com.hospital.vo.TestBlood_17VO">
+		select * from TestBlood_17 where patientidx = #{patientidx}  
+	</select>
+
+<!-- 퇴원 환자 검사 리스트 갯수  -->
+	<select id="countTestBloodList" parameterType="int" resultType="int">
+		select count(*) from TestBlood_17 where patientidx = #{patientidx}
+	</select>
+	<select id="countTestUrineList" parameterType="int" resultType="int">
+		select count(*) from TestUrine_21 where patientidx = #{patientidx}
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

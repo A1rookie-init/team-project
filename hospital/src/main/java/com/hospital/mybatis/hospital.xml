@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.hospital.mybatis.MyBatisDAO">
+ 
+
+	<!-- idx하나를 얻어온다 -->
+	<select id="selectByEmployeeIdx" parameterType="int" resultType="com.hospital.vo.Employee_20VO">
+		select * from employee_20 where employeeIdx = #{employeeIdx}
+	</select>
+	
+	<insert id="insertPatient" parameterType="com.hospital.vo.Patient_1VO">
+		insert into patient_1 (patientIdx, name, REGISTNUM1, REGISTNUM2, AGE, GENDER, ADDRESS, INSURANCE, ROOM, MEAL, DOCTORT, NURSET)
+		values (Patient_1_idx_seq.nextval, #{name}, #{registNum1}, #{registNum2}, #{age}, #{gender}, #{address}, #{insurance}, #{room}, #{meal}, #{doctorT}, #{nurseT})
+	</insert>
+	
+	<select id="selectCount" resultType="int">
+		select count(*) from patient_1
+	</select>
+	
+	<select id="selectList" parameterType="java.util.HashMap" resultType="com.hospital.vo.Patient_1VO">
+		<![CDATA[
+		select * from (
+			select rownum rnum, GG. * from ( 
+				select * from patient_1 order by patientIdx desc
+			) GG where rownum <= #{endNo}
+		)  where rnum >= #{startNo}
+		]]> 
+	</select>
+	<!--
+	<select id="selectPatientDoctorT" parameterType="String" resultType="com.hospital.vo.Patient_1VO">
+		select * from patient_1 where doctorT = #{doctorT}
+	</select>
+	-->
+	<select id="selectPatientDoctorT" parameterType="String" resultType="int">
+		select patientIdx from patient_1 where doctorT = #{doctorT} order by patientIdx desc
+	</select>
+
+	
+</mapper> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

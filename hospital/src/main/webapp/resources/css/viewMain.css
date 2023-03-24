@@ -1,0 +1,46 @@
+* {
+	box-sizing: border-box;
+}
+
+header {
+	padding: 10px;
+}
+
+nav {
+	/* text-align: left; */
+	float: left;
+	padding: 20px;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+article {
+	/* text-align: left; */
+	float: left;
+	padding: 20px;
+}
+
+section::after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+/* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
+@media ( max-width : 700px) {
+	nav, article {
+		width: 100%;
+		height: auto;
+	}
+}
+
+#d1 {
+	color: blue;	/* 금일입원한 환자는 재원환자조회에서 다른색 글씨로 나오게함 */
+}
+
+.block {
+	background-color: #CEECF5; /* 새 알림이 오면 블럭처리된 상태이고 클릭하면 블럭처리가 사라짐  */
+}

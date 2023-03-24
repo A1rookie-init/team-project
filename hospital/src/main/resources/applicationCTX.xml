@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<bean id="patientVO" class="com.hospital.vo.Patient_1VO" />
+	<bean id="patient_1List_All" class="com.hospital.vo.Patient_1List_All" />
+	<bean id="patient_1List_My" class="com.hospital.vo.Patient_1List_My" />
+	<bean id="patient_1List_Item" class="com.hospital.vo.Patient_1List_Item" />
+
+	<bean id="noticeToDVO" class="com.hospital.vo.NoticeToD_2VO" />
+	<bean id="noticeToDList" class="com.hospital.vo.NoticeToD_2List" />
+
+	<bean id="handoverDVO" class="com.hospital.vo.HandoverD_3VO" />
+	<bean id="handoverDList" class="com.hospital.vo.HandoverD_3List" />
+
+	<bean id="prescriptionMedVO" class="com.hospital.vo.PrescriptionMed_4VO" />
+	<bean id="prescriptionMedList" class="com.hospital.vo.PrescriptionMed_4List" />
+
+	<bean id="prescriptionTestVO" class="com.hospital.vo.PrescriptionTest_5VO" />
+	<bean id="prescriptionTestList" class="com.hospital.vo.PrescriptionTest_5List" />
+
+	<bean id="medicalCommentVO"	class="com.hospital.vo.MedicalComment_7VO" />
+	<bean id="medicalCommentList" class="com.hospital.vo.MedicalComment_7List" />
+
+	<bean id="noticeToNVO" class="com.hospital.vo.NoticeToN_8VO" />
+	<bean id="noticeToNList" class="com.hospital.vo.NoticeToN_8List" />
+
+	<bean id="handoverNVO" class="com.hospital.vo.HandoverN_9VO" />
+	<bean id="handoverNList" class="com.hospital.vo.HandoverN_9List" />
+
+	<bean id="vitalSignVO" class="com.hospital.vo.VitalSign_10VO" />
+	<bean id="vitalSignList" class="com.hospital.vo.VitalSign_10List" />
+
+	<bean id="injectionVO" class="com.hospital.vo.Injection_11VO" />
+	<bean id="injectionList" class="com.hospital.vo.Injection_11List" />
+
+	<bean id="nursingCommentVO"	class="com.hospital.vo.NursingComment_13VO" />
+	<bean id="nursingCommentList" class="com.hospital.vo.NursingComment_13_List" />
+
+	<bean id="noticeToPVO" class="com.hospital.vo.NoticeToP_14VO" />
+	<bean id="noticeToPList" class="com.hospital.vo.NoticeToP_14List" />
+
+	<bean id="workmemoPVO" class="com.hospital.vo.WorkMemoP_15VO" />
+	<bean id="workmemoPlist" class="com.hospital.vo.WorkMemoP_15List" />
+
+	<bean id="testBloodVO" class="com.hospital.vo.TestBlood_17VO" />
+	<bean id="testBloodList" class="com.hospital.vo.TestBlood_17List" />
+
+	<bean id="noticeToAVO" class="com.hospital.vo.NoticeToA_18VO" />
+	<bean id="noticeToAlist" class="com.hospital.vo.NoticeToA_18List" />
+
+	<bean id="workmemoavo" class="com.hospital.vo.WorkMemoA_19VO" />
+	<bean id="workmemoList" class="com.hospital.vo.WorkMemoA_19List" />
+
+	<bean id="employeeVO" class="com.hospital.vo.Employee_20VO" />
+	<bean id="employeeList" class="com.hospital.vo.Employee_20List" />
+
+	<bean id="testUrineVO" class="com.hospital.vo.TestUrine_21VO" />
+	<bean id="testUrineList" class="com.hospital.vo.TestUrine_21List" />
+
+	<bean id="medicineVO" class="com.hospital.vo.Medicine_22VO" />
+	<bean id="medicineList" class="com.hospital.vo.Medicine_22List" />
+
+	<bean id="dpartVO" class="com.hospital.vo.Dpart_23VO" />
+	<bean id="dpartList" class="com.hospital.vo.Dpart_23List" />
+	
+	<bean id="viewMedicalVO" class="com.hospital.vo.ViewMedicalVO" />
+	<bean id="viewMedicalList" class="com.hospital.vo.ViewMedicalList" />
+	
+	<bean id="viewNursingVO" class="com.hospital.vo.ViewNursingVO" />
+	<bean id="viewNursingList" class="com.hospital.vo.ViewNursingList" />
+
+	<bean id="viewTestList" class="com.hospital.vo.ViewTestList"/>
+	
+	<bean id="teamCount" class="com.hospital.vo.TeamCount"/>
+</beans>

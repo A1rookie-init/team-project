@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mybatis.MyBatisDAO">
+
+	<select id="selectNursingCommentList" parameterType="int" resultType="com.hospital.vo.NursingComment_13VO">
+		select * from nursingComment_13 where (TO_CHAR(sysdate, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd')) and patientIdx = #{patientIdx} order by idx
+	</select>
+
+	<delete id="deleteNursingComment" parameterType="int">
+		delete from nursingComment_13 where idx = #{idx}
+	</delete>
+	
+	<select id="selectInjectionList" parameterType="int" resultType="com.hospital.vo.Injection_11VO">
+		select * from injection_11 where (TO_CHAR(sysdate, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd')) and patientIdx = #{patientIdx} order by idx
+	</select>
+
+<!-- 약 추가 -->
+	<insert id="insertInjection" parameterType="com.hospital.vo.Injection_11VO">
+		insert into INJECTION_11 (idx, patientIdx, name, medicine, dosage, route, injectTime, employeeIdx, employeename) 
+		values (Injection_11_idx_seq.nextval, #{patientIdx}, #{name}, #{medicine}, #{dosage}, #{route}, #{injectTime}, #{employeeIdx}, #{employeeName})
+	</insert>	
+
+
+	
+	<update id="updateInjection9Y" parameterType="int">
+		update injection_11 set realTime9A = 'Y' where idx = #{idx}
+	</update>
+	
+	<update id="updateInjection13Y" parameterType="int">
+		update injection_11 set realTime1P = 'Y' where idx = #{idx}
+	</update>
+	
+	<update id="updateInjection18Y" parameterType="int">
+		update injection_11 set realTime6P = 'Y' where idx = #{idx}
+	</update>
+	
+	<update id="updateInjection21Y" parameterType="int">
+		update injection_11 set realTime9P = 'Y' where idx = #{idx}
+	</update>
+	
+	<update id="updateInjection9N" parameterType="int">
+		update injection_11 set realTime9A = 'N' where idx = #{idx}
+	</update>
+	<update id="updateInjection13N" parameterType="int">
+		update injection_11 set realTime1P = 'N' where idx = #{idx}
+	</update>
+	<update id="updateInjection18N" parameterType="int">
+		update injection_11 set realTime6P = 'N' where idx = #{idx}
+	</update>
+	<update id="updateInjection21N" parameterType="int">
+		update injection_11 set realTime9P = 'N' where idx = #{idx}
+	</update>
+	
+	<update id="updateNursingComment" parameterType="com.hospital.vo.NursingComment_13VO">
+		update nursingComment_13 set recordN = #{recordN} where idx = #{idx}
+	</update>
+	
+	<select id="selectVitalSignList" parameterType="int" resultType="com.hospital.vo.VitalSign_10VO">
+		select * from vitalsign_10 where (TO_CHAR(sysdate, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd')) and patientIdx = #{patientIdx} order by idx
+	</select>
+	
+	<insert id="insertVital" parameterType="com.hospital.vo.VitalSign_10VO">
+		insert into VITALSIGN_10 (idx, patientIdx, name, bp, hr, bt, rr, vitalTime, employeeIdx, employeeName) 
+		values (VITALSIGN_10_idx_seq.nextval, #{patientIdx}, #{name}, #{bp}, #{hr}, #{bt}, #{rr}, #{vitalTime}, #{employeeIdx}, #{employeeName})
+	</insert>
+	
+	<delete id="deleteNursingVital" parameterType="int">
+		delete from vitalSign_10 where idx = #{idx}
+	</delete>
+	
+	<insert id="insertNursingComment" parameterType="com.hospital.vo.NursingComment_13VO">
+		insert into NURSINGCOMMENT_13 (idx, patientIdx, name, recordN, employeeIdx, employeeName)
+		values (NURSINGCOMMENT_13_idx_seq.nextval, #{patientIdx}, #{name}, #{recordN}, #{employeeIdx}, #{employeeName})
+	</insert>
+	<insert id="insertNoticeToP" parameterType="com.hospital.vo.NoticeToP_14VO">
+		insert into NoticeToP_14 (idx, patientIdx, name, alarmP, fromDP, employeeIdx, fromName)
+		values (NoticeToP_14_idx_seq.nextval, #{patientIdx}, #{name}, #{alarmP}, #{fromDP}, #{employeeIdx}, #{fromName})
+	</insert>
+	
+	<insert id="insertNoticeToA" parameterType="com.hospital.vo.NoticeToA_18VO">
+		insert into NoticeToA_18 (idx, patientIdx, name, alarmA, fromDP, employeeIdx, fromName)
+		values (NoticeToA_18_idx_seq.nextval, #{patientIdx}, #{name}, #{alarmA}, #{fromDP}, #{employeeIdx}, #{fromName})
+	</insert>
+	<insert id="insertNoticeToDFromN" parameterType="com.hospital.vo.NoticeToD_2VO">
+		insert into NoticeToD_2 (idx, patientIdx, name, alarmD, fromDP, employeeIdx, fromName)
+		values (NoticeToD_2_idx_seq.nextval, #{patientIdx}, #{name}, #{alarmD}, #{fromDP}, #{employeeIdx}, #{fromName})
+	</insert>
+
+
+<!-- 메인페이지 (간호사) -->
+	
+	<select id="selectNoticeToNList" parameterType="String" resultType="com.hospital.vo.NoticeToN_8VO">
+		select Q.idx, Q.patientidx, Q.name, Q.alarmn, Q.fromdp, Q.employeeidx, Q.fromname, Q.writedate from 
+		(SELECT P.nurset, n.idx, n.patientidx, n.name, n.alarmn, n.fromdp, n.employeeidx, n.fromname, n.writedate 
+		FROM noticeton_8 N, patient_1 P WHERE N.patientidx = P.patientidx) Q where Q.nurseT = #{nurseT} 
+		and (TO_CHAR(sysdate, 'yyyy/mm/dd') = TO_CHAR(Q.writedate, 'yyyy/mm/dd'))
+		order by Q.idx 
+	</select>
+	
+	<select id="selectHandoverNList" parameterType="String" resultType="com.hospital.vo.HandoverN_9VO">
+		select * from handoverN_9 where fromDT = #{nurseT} order by gup, lev, idx
+	</select>
+	
+<!-- 업무인계 -->
+	<insert id="insertHandoverN_new" parameterType="com.hospital.vo.HandoverN_9VO">
+		insert into HandoverN_9 (idx, employeeIdx, fromname, commentN, fromDT, gup, lev)
+		values(HandoverN_9_idx_seq.nextval, #{employeeIdx}, #{fromName}, #{commentN}, #{fromDT}, HandoverN_9_idx_seq.currval, 0)
+	</insert>
+	
+	<insert id="insertHandoverN_reply" parameterType="com.hospital.vo.HandoverN_9VO">
+		insert into HandoverN_9 (idx, employeeIdx, fromname, commentN, fromDT, gup, lev)
+		values(HandoverN_9_idx_seq.nextval, #{employeeIdx}, #{fromName}, #{commentN}, #{fromDT}, #{gup}, 1)
+	</insert>
+	
+	
+	
+	<select id="commentNselectByIdx" parameterType="int" resultType="com.hospital.vo.HandoverN_9VO">
+		select * from HandoverN_9 where idx = #{idx}
+	</select>
+	
+	<!-- 업무 인계 삭제 -->
+	<delete id="deleteNhandover" parameterType="int">
+		delete from HandoverN_9 where gup = #{gup} or idx = #{idx} 
+	</delete>
+	
+	<!-- 업무 인계 수정 -->
+	<update id="updateNhandover" parameterType="com.hospital.vo.HandoverN_9VO">
+		update HandoverN_9 set commentN = #{commentN} where idx = #{idx}
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

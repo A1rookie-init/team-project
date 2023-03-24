@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mybatis.MyBatisDAO">
+
+
+
+<!-- 메인페이지 (의사) -->
+	
+	<select id="selectNoticeToDList" parameterType="String" resultType="com.hospital.vo.NoticeToD_2VO">
+		select Q.idx, Q.patientidx, Q.name, Q.alarmd, Q.fromdp, Q.employeeidx, Q.fromname, Q.writedate from 
+		(SELECT P.doctort, n.idx, n.patientidx, n.name, n.alarmd, n.fromdp, n.employeeidx, n.fromname, n.writedate 
+		FROM noticetod_2 N, patient_1 P WHERE N.patientidx = P.patientidx) Q where Q.doctort = #{doctorT} 
+		and (TO_CHAR(sysdate, 'yyyy/mm/dd') = TO_CHAR(Q.writedate, 'yyyy/mm/dd'))
+		order by Q.idx 
+	</select>
+	
+	<select id="selectHandoverDList" parameterType="String" resultType="com.hospital.vo.HandoverD_3VO">
+		select * from handoverD_3 where fromDT = #{doctorT} order by gup, lev, idx
+	</select>
+
+
+
+<!-- 진료수행페이지  -->
+
+<!-- 약검색 -->
+	<select id="selectMedicineListByName" parameterType="String" resultType="com.hospital.vo.Medicine_22VO">
+		select * from medicine_22 where medicine like '%'||#{mediName}||'%' order by code
+	</select>
+
+<!-- 약검색 후 선택 -->
+	<select id="selectMedicineByCode" parameterType="String" resultType="com.hospital.vo.Medicine_22VO">
+		select * from medicine_22 where code = #{code}
+	</select>
+
+<!-- 약물처방 추가 -->
+	<insert id="insertMediPreMed" parameterType="com.hospital.vo.PrescriptionMed_4VO">
+		insert into PRESCRIPTIONMED_4 (idx, patientIdx, name, medicine, dosage, route, injectTime, dischargeM, employeeIdx, employeename) 
+		values (PrescriptionMed_4_idx_seq.nextval, #{patientIdx}, #{name}, #{medicine}, #{dosage}, #{route}, #{injectTime}, #{dischargeM}, #{employeeIdx}, #{employeeName})
+	</insert>	
+<!-- 간호사에게 약물처방 알림 추가 -->
+
+	<insert id="insertNoticeToNFromD" parameterType="com.hospital.vo.NoticeToN_8VO">
+		insert into NoticeToN_8 (idx, patientIdx, name, alarmN, fromDP, employeeIdx, fromName)
+		values (NoticeToN_8_idx_seq.nextval, #{patientIdx}, #{name}, #{alarmN}, '의사', #{employeeIdx}, #{fromName})
+	</insert>
+	
+<!-- 	처방내역삭제 -->
+	<delete id="deleteMediPreMed" parameterType="int">
+		delete from PRESCRIPTIONMED_4 where idx = #{idx}
+	</delete>
+	
+	<delete id="deleteMediPreTest" parameterType="int">
+		delete from PRESCRIPTIONTEST_5 where idx = #{idx}
+	</delete>
+
+<!-- 	처방내역 불러오기 -->
+	<select id="selectPrescriptionMedList" parameterType="int" resultType="com.hospital.vo.PrescriptionMed_4VO">
+		select * from PrescriptionMed_4 where (TO_CHAR(sysdate, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd')) and patientIdx = #{patientIdx} order by idx
+	</select>
+
+	<select id="selectPrescriptionTestList" parameterType="int" resultType="com.hospital.vo.PrescriptionTest_5VO">
+		select * from PrescriptionTest_5 where (TO_CHAR(sysdate, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd')) and patientIdx = #{patientIdx} order by idx
+	</select>
+
+<!-- 	약 처방내역 1개 불러오기 -->
+	<select id="selectPrescriptionMedOne" parameterType="int" resultType="com.hospital.vo.PrescriptionMed_4VO">
+		select * from PrescriptionMed_4 where idx = #{idx}
+	</select>
+	
+<!-- 	검사 처방내역 1개 불러오기 -->
+	<select id="selectPrescriptionTestOne" parameterType="int" resultType="com.hospital.vo.PrescriptionTest_5VO">
+		select * from PrescriptionTest_5 where idx = #{idx}
+	</select>
+	
+	
+	
+	
+	<select id="selectMediCommentList" parameterType="int" resultType="com.hospital.vo.MedicalComment_7VO">
+		select * from MedicalComment_7 where (TO_CHAR(sysdate, 'yyyy/mm/dd') = TO_CHAR(writedate, 'yyyy/mm/dd')) and patientIdx = #{patientIdx} order by idx
+	</select>
+
+	<insert id="insertMediComment" parameterType="com.hospital.vo.MedicalComment_7VO">
+		insert into MedicalComment_7 (idx, patientIdx, name, recordD, employeeIdx, employeeName, dischargeC)
+		values (MedicalComment_7_idx_seq.nextval, #{patientIdx}, #{name}, #{recordD}, #{employeeIdx}, #{employeeName}, #{dischargeC})
+	</insert>
+
+	<insert id="insertMediPreTest" parameterType="com.hospital.vo.PrescriptionTest_5VO">
+		insert into PrescriptionTest_5 (idx, patientIdx, name, test, employeeIdx, employeeName)
+		values (PrescriptionTest_5_idx_seq.nextval, #{patientIdx}, #{name}, #{test}, #{employeeIdx}, #{employeeName})
+	</insert>
+
+	<update id="updateMediComment" parameterType="com.hospital.vo.MedicalComment_7VO">
+		update MedicalComment_7 set recordD = #{recordD} where idx = #{idx}
+	</update>
+	
+	<delete id="deleteMediComment" parameterType="int">
+		delete from MedicalComment_7 where idx = #{idx}
+	</delete>
+	
+	<!-- 초진 등록 -->
+	<update id="updatePatient" parameterType="com.hospital.vo.Patient_1VO">
+		update Patient_1 set cc = #{cc}, pi = #{pi}, histroy = #{histroy}, allergy = #{allergy}, alcohol = #{alcohol}, 
+		smoking = #{smoking}, diagnosis = #{diagnosis}, carePlan = #{carePlan}, exDisDate = #{exDisDate} where patientIdx = #{patientIdx} 
+	</update>
+	
+	<!-- 의사 => 간호사 알람 -->
+	<insert id="insertNoticeToNFromD2" parameterType="com.hospital.vo.NoticeToN_8VO">
+		insert into NoticeToN_8 (idx, patientIdx, name, alarmN, fromDP, employeeIdx, fromName)
+		values(NoticeToN_8_idx_seq.nextval, #{patientIdx}, #{name}, #{alarmN}, #{fromDP}, #{employeeIdx}, #{fromName})
+	</insert>
+
+<!-- 업무인계 -->
+	<insert id="insertHandoverD_new" parameterType="com.hospital.vo.HandoverD_3VO">
+		insert into HandoverD_3 (idx, employeeIdx, fromname, commentD, fromDT, gup, lev)
+		values(HandoverD_3_idx_seq.nextval, #{employeeIdx}, #{fromName}, #{commentD}, #{fromDT}, HandoverD_3_idx_seq.currval, 0)
+	</insert>
+	
+	<insert id="insertHandoverD_reply" parameterType="com.hospital.vo.HandoverD_3VO">
+		insert into HandoverD_3 (idx, employeeIdx, fromname, commentD, fromDT, gup, lev)
+		values(HandoverD_3_idx_seq.nextval, #{employeeIdx}, #{fromName}, #{commentD}, #{fromDT}, #{gup}, 1)
+	</insert>
+	
+	
+	
+	<select id="commentselectByIdx" parameterType="int" resultType="com.hospital.vo.HandoverD_3VO">
+		select * from HandoverD_3 where idx = #{idx}
+	</select>
+	
+	<!-- 업무 인계 삭제 -->
+	<delete id="deletehandover" parameterType="int">
+		delete from HandoverD_3 where gup = #{gup} or idx = #{idx} 
+	</delete>
+	
+	<!-- 업무 인계 수정 -->
+	<update id="updatehandover" parameterType="com.hospital.vo.HandoverD_3VO">
+		update HandoverD_3 set commentD = #{commentD} where idx = #{idx}
+	</update>
+	
+
+	
+</mapper> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mybatis.MyBatisDAO">
+
+<!-- 	해당팀에 속한 최근 환자 꺼내오기 -->
+	<select id="selectRecentPatientByNTeam" parameterType="String" resultType="com.hospital.vo.Patient_1VO">
+		select * from (SELECT * FROM patient_1 where doctorT = #{doctorT, jdbcType=VARCHAR} or nurseT = #{nurseT, jdbcType=VARCHAR} ORDER BY patientIdx DESC) WHERE ROWNUM= 1
+	</select>
+	<select id="selectRecentPatientByDTeam" parameterType="String" resultType="com.hospital.vo.Patient_1VO">
+		select * from (SELECT * FROM patient_1 where doctorT = #{doctorT, jdbcType=VARCHAR} or nurseT = #{nurseT, jdbcType=VARCHAR} ORDER BY patientIdx DESC) WHERE ROWNUM= 1
+	</select>
+
+
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
